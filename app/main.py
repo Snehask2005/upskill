@@ -1,6 +1,8 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
 import pdfplumber
 from test_spicy import extract_skills
+from matcher import match_skills
+from fastapi import Body
 
 app = FastAPI(title="Resume Skill Intelligence API")
 
@@ -10,10 +12,13 @@ def root():
     return {"message": "API is running"}
 
 
-@app.post("/upload-resume/")
-async def upload_resume(file: UploadFile = File(...)):
+@app.post("/analuze-resume/")
+
+async def upload_resume(file: UploadFile = File(...), job_description: str = Form(...)):
+
     if not file.filename.endswith(".pdf"):
         return {"error": "Only PDF files are supported"}
+    
 
     text = ""
 
@@ -22,9 +27,15 @@ async def upload_resume(file: UploadFile = File(...)):
             text += page.extract_text() or ""
     
     skills = extract_skills(text)
+    job_skills = extract_skills(job_description)
+
+    result = match_skills(skills, job_skills)
 
     return {
         "filename": file.filename,
         "skills_found": skills,
-        "total_skills": len(skills)
+        "total_skills": len(skills),
+        "job_required_skills": job_skills,
+        "Analysis": result
     }
+
