@@ -72,7 +72,8 @@ def match_skills(resume_skills: list, job_skills: list, job_description: str):
         explanation = "Weak match. Significant skill gaps exist."
 
     if missing:
-        explanation += f" Missing skills: {', '.join(missing)}."
+        explanation += f"\n\nMissing skills: {', '.join(missing)}."
+
 
     return {
         "Core Skills": core_skills,
