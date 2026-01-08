@@ -1,10 +1,14 @@
 from fastapi import FastAPI, UploadFile, File, Form
 import pdfplumber
-from test_spicy import extract_skills
+from skill_extracter import extract_skills
 from matcher import match_skills
 from fastapi import Body
 
+
+
 app = FastAPI(title="Resume Skill Intelligence API")
+
+
 
 
 @app.get("/")
@@ -29,7 +33,7 @@ async def upload_resume(file: UploadFile = File(...), job_description: str = For
     skills = extract_skills(text)
     job_skills = extract_skills(job_description)
 
-    result = match_skills(skills, job_skills)
+    result = match_skills(skills, job_skills, job_description)
 
     return {
         "filename": file.filename,
